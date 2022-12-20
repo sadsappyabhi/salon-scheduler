@@ -51,17 +51,29 @@ APPT_MENU() {
       NEW_CUST_APPT=$($PSQL "INSERT INTO appointments(customer_id, service_id, time) VALUES($NEW_CUST_ID, $SERVICE_ID_SELECTED, '$SERVICE_TIME')")
       #get service name to print
       SERVICE_NAME=$($PSQL "SELECT name FROM services WHERE service_id = $SERVICE_ID_SELECTED")
-      echo -e "\nI have you down for a '$SERVICE_NAME' at '$SERVICE_TIME', '$CUSTOMER_NAME'."
+      #Once the appointment has been added, print "I have put you down for a <service> at <time>, <name>."
+      echo -e "\nI have you down for a $SERVICE_NAME at $SERVICE_TIME, $CUSTOMER_NAME."
+      EXIT
     #set appointment for existing customer
     #get customer's name and echo back
-    else echo "Welcome back <so and so>, what time works best for you?"
+    else 
+      CUSTOMER_NAME=$($PSQL "SELECT name FROM customers WHERE customer_id = $CUSTOMER_ID")
+      echo -e "\nWelcome back, $CUSTOMER_NAME, what time works best for you?"
+      #if cust exists, go straight to setting time
+      read SERVICE_TIME
+      #enter appointment
+      EXIST_CUST_APPT=$($PSQL "INSERT INTO appointments(customer_id, service_id, time) VALUES($CUSTOMER_ID, $SERVICE_ID_SELECTED, '$SERVICE_TIME')")
+      #get service name and confirm appointment
+      SERVICE_NAME=$($PSQL "SELECT name FROM services WHERE service_id = $SERVICE_ID_SELECTED")
+      echo -e "\nI have you down for a $SERVICE_NAME at $SERVICE_TIME, $CUSTOMER_NAME."
+      EXIT
     fi
 
-  #if cust exists, go straight to setting time
   
   
   
-  #Once the appointment has been added, print "I have put you down for a <service> at <time>, <name>."
+  
+  
 }
 
 EXIT() {
