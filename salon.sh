@@ -42,16 +42,25 @@ APPT_MENU() {
       read CUSTOMER_NAME
       #enter customer info into customers table
       NEW_CUSTOMER_INFO=$($PSQL "INSERT INTO customers(name, phone) VALUES('$CUSTOMER_NAME', '$CUSTOMER_PHONE')")
+      #get time for appt
       echo -e "\nWhen would you like your appointment?"
       read SERVICE_TIME
+      #get new customer id
+      NEW_CUST_ID=$($PSQL "SELECT customer_id FROM customers WHERE phone = '$CUSTOMER_PHONE'")
+      #create a row in appointments table with customer_id, service_id, time
+      NEW_CUST_APPT=$($PSQL "INSERT INTO appointments(customer_id, service_id, time) VALUES($NEW_CUST_ID, $SERVICE_ID_SELECTED, '$SERVICE_TIME')")
+      #get service name to print
+      SERVICE_NAME=$($PSQL "SELECT name FROM services WHERE service_id = $SERVICE_ID_SELECTED")
+      echo -e "\nI have you down for a '$SERVICE_NAME' at '$SERVICE_TIME', '$CUSTOMER_NAME'."
     #set appointment for existing customer
-    else echo "Welcome back."
+    #get customer's name and echo back
+    else echo "Welcome back <so and so>, what time works best for you?"
     fi
 
   #if cust exists, go straight to setting time
   
-  #get time for appt
-  #create a row in appointments table with service_id, name, phone#, time & Customer ID
+  
+  
   #Once the appointment has been added, print "I have put you down for a <service> at <time>, <name>."
 }
 
